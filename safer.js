@@ -72,3 +72,4 @@ if (!safer.constants) {
 }
 
 export default safer;
+export { Buffer };
