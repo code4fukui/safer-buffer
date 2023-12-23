@@ -13,6 +13,10 @@ Modern Buffer API polyfill without footguns, working on Node.js from 0.8 to curr
 
 ## How to use?
 
+```js
+import { Buffer } from "https://code4fukui.github.io/safer-buffer/safer.js";
+```
+
 First, port all `Buffer()` and `new Buffer()` calls to `Buffer.alloc()` and `Buffer.from()` API.
 
 Then, to achieve compatibility with outdated Node.js versions (`<4.5.0` and 5.x `<5.10.0`), use

@@ -1,11 +1,8 @@
-/* eslint-disable node/no-deprecated-api */
+import { Buffer } from "https://taisukef.github.io/buffer/Buffer.js";
+import safer from "./safer.js";
 
-'use strict'
-
-var buffer = require('buffer')
-var Buffer = buffer.Buffer
-var safer = require('./safer.js')
-var Safer = safer.Buffer
+const buffer = { Buffer, Safer: safer.Buffer };
+const Safer = buffer.Safer;
 
 var dangerous = {}
 
@@ -55,4 +52,4 @@ if (!Dangereous.allocUnsafeSlow) {
   }
 }
 
-module.exports = dangerous
+export default dangerous

@@ -1,25 +1,31 @@
-/* eslint-disable node/no-deprecated-api */
+import * as _t from "https://deno.land/std/testing/asserts.ts";
+import * as buffer from "https://taisukef.github.io/buffer/Buffer.js";
+import safer from "./safer.js";
+import dangerous from "./dangerous.js";
 
-'use strict'
+const index = safer;
 
-var test = require('tape')
-
-var buffer = require('buffer')
-
-var index = require('./')
-var safer = require('./safer')
-var dangerous = require('./dangerous')
+const t = {
+  end: () => {},
+  ok: _t.assert,
+  deepEqual: _t.assertEquals,
+  notDeepEqual: _t.assertNotEquals,
+  throws: _t.assertThrows,
+  notEqual: _t.assertNotEquals,
+  skip: () => {},
+  equal: _t.equal,
+};
 
 /* Inheritance tests */
 
-test('Default is Safer', function (t) {
+Deno.test('Default is Safer', function () {
   t.equal(index, safer)
   t.notEqual(safer, dangerous)
   t.notEqual(index, dangerous)
   t.end()
 })
 
-test('Is not a function', function (t) {
+Deno.test('Is not a function', function () {
   [index, safer, dangerous].forEach(function (impl) {
     t.equal(typeof impl, 'object')
     t.equal(typeof impl.Buffer, 'object')
@@ -31,7 +37,7 @@ test('Is not a function', function (t) {
   t.end()
 })
 
-test('Constructor throws', function (t) {
+Deno.test('Constructor throws', function () {
   [index, safer, dangerous].forEach(function (impl) {
     t.throws(function () { impl.Buffer() })
     t.throws(function () { impl.Buffer(0) })
@@ -45,7 +51,7 @@ test('Constructor throws', function (t) {
   t.end()
 })
 
-test('Safe methods exist', function (t) {
+Deno.test('Safe methods exist', function () {
   [index, safer, dangerous].forEach(function (impl) {
     t.equal(typeof impl.Buffer.alloc, 'function', 'alloc')
     t.equal(typeof impl.Buffer.from, 'function', 'from')
@@ -53,7 +59,7 @@ test('Safe methods exist', function (t) {
   t.end()
 })
 
-test('Unsafe methods exist only in Dangerous', function (t) {
+Deno.test('Unsafe methods exist only in Dangerous', function () {
   [index, safer].forEach(function (impl) {
     t.equal(typeof impl.Buffer.allocUnsafe, 'undefined')
     t.equal(typeof impl.Buffer.allocUnsafeSlow, 'undefined')
@@ -65,7 +71,7 @@ test('Unsafe methods exist only in Dangerous', function (t) {
   t.end()
 })
 
-test('Generic methods/properties are defined and equal', function (t) {
+Deno.test('Generic methods/properties are defined and equal', function () {
   ['poolSize', 'isBuffer', 'concat', 'byteLength'].forEach(function (method) {
     [index, safer, dangerous].forEach(function (impl) {
       t.equal(impl.Buffer[method], buffer.Buffer[method], method)
@@ -75,7 +81,7 @@ test('Generic methods/properties are defined and equal', function (t) {
   t.end()
 })
 
-test('Built-in buffer static methods/properties are inherited', function (t) {
+Deno.test('Built-in buffer static methods/properties are inherited', function () {
   Object.keys(buffer).forEach(function (method) {
     if (method === 'SlowBuffer' || method === 'Buffer') return;
     [index, safer, dangerous].forEach(function (impl) {
@@ -86,7 +92,7 @@ test('Built-in buffer static methods/properties are inherited', function (t) {
   t.end()
 })
 
-test('Built-in Buffer static methods/properties are inherited', function (t) {
+Deno.test('Built-in Buffer static methods/properties are inherited', function () {
   Object.keys(buffer.Buffer).forEach(function (method) {
     if (method === 'allocUnsafe' || method === 'allocUnsafeSlow') return;
     [index, safer, dangerous].forEach(function (impl) {
@@ -97,7 +103,7 @@ test('Built-in Buffer static methods/properties are inherited', function (t) {
   t.end()
 })
 
-test('.prototype property of Buffer is inherited', function (t) {
+Deno.test('.prototype property of Buffer is inherited', function () {
   [index, safer, dangerous].forEach(function (impl) {
     t.equal(impl.Buffer.prototype, buffer.Buffer.prototype, 'prototype')
     t.notEqual(typeof impl.Buffer.prototype, 'undefined', 'prototype')
@@ -105,7 +111,7 @@ test('.prototype property of Buffer is inherited', function (t) {
   t.end()
 })
 
-test('All Safer methods are present in Dangerous', function (t) {
+Deno.test('All Safer methods are present in Dangerous', function () {
   Object.keys(safer).forEach(function (method) {
     if (method === 'Buffer') return;
     [index, safer, dangerous].forEach(function (impl) {
@@ -124,7 +130,7 @@ test('All Safer methods are present in Dangerous', function (t) {
   t.end()
 })
 
-test('Safe methods from Dangerous methods are present in Safer', function (t) {
+Deno.test('Safe methods from Dangerous methods are present in Safer', function () {
   Object.keys(dangerous).forEach(function (method) {
     if (method === 'Buffer') return;
     [index, safer, dangerous].forEach(function (impl) {
@@ -146,7 +152,7 @@ test('Safe methods from Dangerous methods are present in Safer', function (t) {
 
 /* Behaviour tests */
 
-test('Methods return Buffers', function (t) {
+Deno.test('Methods return Buffers', function () {
   [index, safer, dangerous].forEach(function (impl) {
     t.ok(buffer.Buffer.isBuffer(impl.Buffer.alloc(0)))
     t.ok(buffer.Buffer.isBuffer(impl.Buffer.alloc(0, 10)))
@@ -169,7 +175,7 @@ test('Methods return Buffers', function (t) {
   t.end()
 })
 
-test('Constructor is buffer.Buffer', function (t) {
+Deno.test('Constructor is buffer.Buffer', function () {
   [index, safer, dangerous].forEach(function (impl) {
     t.equal(impl.Buffer.alloc(0).constructor, buffer.Buffer)
     t.equal(impl.Buffer.alloc(0, 10).constructor, buffer.Buffer)
@@ -192,7 +198,7 @@ test('Constructor is buffer.Buffer', function (t) {
   t.end()
 })
 
-test('Invalid calls throw', function (t) {
+Deno.test('Invalid calls throw', function () {
   [index, safer, dangerous].forEach(function (impl) {
     t.throws(function () { impl.Buffer.from(0) })
     t.throws(function () { impl.Buffer.from(10) })
@@ -246,7 +252,7 @@ test('Invalid calls throw', function (t) {
   t.end()
 })
 
-test('Buffers have appropriate lengths', function (t) {
+Deno.test('Buffers have appropriate lengths', function () {
   [index, safer, dangerous].forEach(function (impl) {
     t.equal(impl.Buffer.alloc(0).length, 0)
     t.equal(impl.Buffer.alloc(10).length, 10)
@@ -265,7 +271,7 @@ test('Buffers have appropriate lengths', function (t) {
   t.end()
 })
 
-test('Buffers have appropriate lengths (2)', function (t) {
+Deno.test('Buffers have appropriate lengths (2)', function () {
   t.equal(index.Buffer.alloc, safer.Buffer.alloc)
   t.equal(index.Buffer.alloc, dangerous.Buffer.alloc)
   var ok = true;
@@ -284,7 +290,7 @@ test('Buffers have appropriate lengths (2)', function (t) {
   t.end()
 })
 
-test('.alloc(size) is zero-filled and has correct length', function (t) {
+Deno.test('.alloc(size) is zero-filled and has correct length', function () {
   t.equal(index.Buffer.alloc, safer.Buffer.alloc)
   t.equal(index.Buffer.alloc, dangerous.Buffer.alloc)
   var ok = true
@@ -306,7 +312,7 @@ test('.alloc(size) is zero-filled and has correct length', function (t) {
   t.end()
 })
 
-test('.allocUnsafe / .allocUnsafeSlow are fillable and have correct lengths', function (t) {
+Deno.test('.allocUnsafe / .allocUnsafeSlow are fillable and have correct lengths', function () {
   ['allocUnsafe', 'allocUnsafeSlow'].forEach(function (method) {
     var ok = true
     for (var i = 0; i < 1e2; i++) {
@@ -329,7 +335,7 @@ test('.allocUnsafe / .allocUnsafeSlow are fillable and have correct lengths', fu
   t.end()
 })
 
-test('.alloc(size, fill) is `fill`-filled', function (t) {
+Deno.test('.alloc(size, fill) is `fill`-filled', function () {
   t.equal(index.Buffer.alloc, safer.Buffer.alloc)
   t.equal(index.Buffer.alloc, dangerous.Buffer.alloc)
   var ok = true
@@ -347,7 +353,7 @@ test('.alloc(size, fill) is `fill`-filled', function (t) {
   t.end()
 })
 
-test('.alloc(size, fill) is `fill`-filled', function (t) {
+Deno.test('.alloc(size, fill) is `fill`-filled', function () {
   t.equal(index.Buffer.alloc, safer.Buffer.alloc)
   t.equal(index.Buffer.alloc, dangerous.Buffer.alloc)
   var ok = true
@@ -378,7 +384,7 @@ test('.alloc(size, fill) is `fill`-filled', function (t) {
   t.end()
 })
 
-test('safer.Buffer.from returns results same as Buffer constructor', function (t) {
+Deno.test('safer.Buffer.from returns results same as Buffer constructor', function () {
   [index, safer, dangerous].forEach(function (impl) {
     t.deepEqual(impl.Buffer.from(''), new buffer.Buffer(''))
     t.deepEqual(impl.Buffer.from('string'), new buffer.Buffer('string'))
@@ -391,7 +397,7 @@ test('safer.Buffer.from returns results same as Buffer constructor', function (t
   t.end()
 })
 
-test('safer.Buffer.from returns consistent results', function (t) {
+Deno.test('safer.Buffer.from returns consistent results', function () {
   [index, safer, dangerous].forEach(function (impl) {
     t.deepEqual(impl.Buffer.from(''), impl.Buffer.alloc(0))
     t.deepEqual(impl.Buffer.from([]), impl.Buffer.alloc(0))

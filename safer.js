@@ -1,9 +1,6 @@
-/* eslint-disable node/no-deprecated-api */
+import { Buffer, SlowBuffer } from "https://taisukef.github.io/buffer/Buffer.js";
 
-'use strict'
-
-var buffer = require('buffer')
-var Buffer = buffer.Buffer
+const buffer = { Buffer, SlowBuffer };
 
 var safer = {}
 
@@ -74,4 +71,4 @@ if (!safer.constants) {
   }
 }
 
-module.exports = safer
+export default safer;
